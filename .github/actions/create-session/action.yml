@@ -54,20 +54,29 @@ runs:
       shell: bash
       run: |
         SESSION_NUM=${{ inputs.session_number }}
+
+        # Debug: Show what's in the session directory
+        echo "📁 Contents of sessions/session$SESSION_NUM:"
+        ls -la sessions/session$SESSION_NUM/
+
         # Create and switch to new session branch
         git checkout -b session$SESSION_NUM
 
-        # Copy session-specific content to root
+        # Clear everything from the branch (except .git)
+        find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+
+        # Copy session-specific content to root (including hidden files)
+        shopt -s dotglob
         cp -r sessions/session$SESSION_NUM/* .
-
-        # Remove the sessions directory from the branch
-        rm -rf sessions/
-
+        
+        # Debug: Show what's now in the root
+        echo "📁 Contents of root after copy:"
+        ls -la .
+        
         # Stage all changes
-        git add .
-
-        # Remove any files that shouldn't be in the session branch
-        git reset HEAD sessions/ 2>/dev/null || true
+        git add -A
+        
+        echo "✅ Session files copied to branch root (main content cleared)"
 
     - name: Setup branch-specific documentation
       shell: bash
