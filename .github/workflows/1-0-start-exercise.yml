@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - session1
-  workflow_dispatch:
+  repository_dispatch:
+    types: [session1-created]
 
 permissions:
   contents: write

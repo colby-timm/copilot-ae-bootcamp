@@ -101,3 +101,20 @@ runs:
       shell: bash
       run: |
         git push origin session${{ inputs.session_number }}
+
+    - name: Enable initial workflow
+      shell: bash
+      run: |
+        # Wait a moment for the push to be processed
+        sleep 5
+        
+        # Trigger the session workflow via repository dispatch
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"session${{ inputs.session_number }}-created","client_payload":{"session_number":"${{ inputs.session_number }}"}}'
+        
+        echo "Triggered session${{ inputs.session_number }} workflow via repository dispatch"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
