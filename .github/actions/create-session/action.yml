@@ -2,7 +2,7 @@ name: 'Create Session Branch'
 description: 'Creates a session branch with all necessary files and configurations'
 inputs:
   session_number:
-    description: 'Session number (1-6)'
+    description: 'Session number (1-8)'
     required: true
   session_topic:
     description: 'Topic of the session'
