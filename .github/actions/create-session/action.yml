@@ -59,23 +59,34 @@ runs:
         echo "📁 Contents of sessions/session$SESSION_NUM:"
         ls -la sessions/session$SESSION_NUM/
 
+        # Create temporary directory to store session content
+        mkdir -p /tmp/session-content
+
+        # Copy session content to temp location (including hidden files)
+        shopt -s dotglob
+        cp -r sessions/session$SESSION_NUM/* /tmp/session-content/
+
+        echo "📁 Session content stored in temp location"
+
         # Create and switch to new session branch
         git checkout -b session$SESSION_NUM
 
         # Clear everything from the branch (except .git)
         find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
 
-        # Copy session-specific content to root (including hidden files)
-        shopt -s dotglob
-        cp -r sessions/session$SESSION_NUM/* .
-        
+        # Copy session-specific content from temp to root
+        cp -r /tmp/session-content/* .
+
         # Debug: Show what's now in the root
         echo "📁 Contents of root after copy:"
         ls -la .
-        
+
+        # Clean up temp directory
+        rm -rf /tmp/session-content
+
         # Stage all changes
         git add -A
-        
+
         echo "✅ Session files copied to branch root (main content cleared)"
 
     - name: Setup branch-specific documentation
