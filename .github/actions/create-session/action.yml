@@ -77,16 +77,6 @@ runs:
         # Copy session-specific content from temp to root
         cp -r /tmp/session-content/* .
 
-        # Handle workflow files by moving them to a different location
-        # to avoid GitHub's workflow creation restrictions
-        if [ -d ".github/workflows" ]; then
-          mkdir -p .session-workflows
-          mv .github/workflows/* .session-workflows/
-          rmdir .github/workflows 2>/dev/null || true
-          echo "📁 Moved workflows to .session-workflows/ to avoid permission issues"
-          echo "ℹ️  Users can manually move these to .github/workflows/ after cloning"
-        fi
-
         # Debug: Show what's now in the root
         echo "📁 Contents of root after copy:"
         ls -la .
@@ -105,10 +95,10 @@ runs:
         - Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
         - All session files and configurations ready
         - Development environment set up
-        - Workflows available in .session-workflows/ directory
+        - Session workflows automatically active
         - Ready for learning! 🚀"
 
-        echo "✅ Session files copied to branch root (workflows moved to .session-workflows/)"
+        echo "✅ Session files copied to branch root (session workflows active)"
 
     - name: Setup branch-specific documentation
       shell: bash
