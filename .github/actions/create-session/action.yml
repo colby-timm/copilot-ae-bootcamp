@@ -77,6 +77,12 @@ runs:
         # Copy session-specific content from temp to root
         cp -r /tmp/session-content/* .
 
+        # Handle workflow permissions by temporarily moving workflows
+        if [ -d ".github/workflows" ]; then
+          mv .github/workflows .github/workflows-temp
+          echo "📁 Temporarily moved workflows to avoid permission issues"
+        fi
+
         # Debug: Show what's now in the root
         echo "📁 Contents of root after copy:"
         ls -la .
@@ -84,8 +90,29 @@ runs:
         # Clean up temp directory
         rm -rf /tmp/session-content
 
-        # Stage all changes
+        # Stage all changes (except workflows)
         git add -A
+
+        # Commit without workflows first
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git commit -m "Initialize Session ${{ inputs.session_number }} - Clean starting state
+
+        - Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
+        - All session files and configurations ready
+        - Development environment set up
+        - Ready for learning! 🚀"
+
+        # Now move workflows back and commit them separately
+        if [ -d ".github/workflows-temp" ]; then
+          mv .github/workflows-temp .github/workflows
+          git add .github/workflows
+          git commit -m "Add session workflows
+
+          - Session-specific GitHub Actions workflows
+          - GitHub Skills integration workflows"
+          echo "📁 Restored workflows directory"
+        fi
 
         echo "✅ Session files copied to branch root (main content cleared)"
 
@@ -149,16 +176,7 @@ runs:
         4. Have fun learning! 🎉
         EOF
 
-    - name: Commit and push session branch
+    - name: Push session branch
       shell: bash
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git commit -m "Initialize Session ${{ inputs.session_number }} - Clean starting state
-
-        - Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
-        - All session files and configurations ready
-        - Development environment set up
-        - Ready for learning! 🚀"
-
         git push origin session${{ inputs.session_number }}
