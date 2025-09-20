@@ -22,3 +22,4 @@ jobs:
         with:
           session_number: '2'
           session_topic: 'Context Architecture and Management'
+          github_token: ${{ secrets.GITHUB_TOKEN }}

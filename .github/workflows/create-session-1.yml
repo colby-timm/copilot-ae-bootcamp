@@ -22,3 +22,4 @@ jobs:
         with:
           session_number: '1'
           session_topic: 'Accelerated Engineering Core and Environment'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
