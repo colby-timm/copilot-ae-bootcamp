@@ -1,0 +1,144 @@
+name: 'Create Session Branch'
+description: 'Creates a session branch with all necessary files and configurations'
+inputs:
+  session_number:
+    description: 'Session number (1-6)'
+    required: true
+  session_topic:
+    description: 'Topic of the session'
+    required: true
+  force_recreate:
+    description: 'Force recreate if branch exists'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check if session branch exists
+      id: check_branch
+      shell: bash
+      run: |
+        if git show-ref --verify --quiet refs/remotes/origin/session${{ inputs.session_number }}; then
+          echo "branch_exists=true" >> $GITHUB_OUTPUT
+          echo "Branch session${{ inputs.session_number }} already exists"
+        else
+          echo "branch_exists=false" >> $GITHUB_OUTPUT
+          echo "Branch session${{ inputs.session_number }} does not exist"
+        fi
+
+    - name: Handle existing branch
+      if: steps.check_branch.outputs.branch_exists == 'true' && inputs.force_recreate == 'true'
+      shell: bash
+      run: |
+        git push origin --delete session${{ inputs.session_number }} || true
+        echo "Deleted existing branch session${{ inputs.session_number }}"
+
+    - name: Handle existing branch (no force)
+      if: steps.check_branch.outputs.branch_exists == 'true' && inputs.force_recreate == 'false'
+      shell: bash
+      run: |
+        echo "::error::Branch session${{ inputs.session_number }} already exists. Use force_recreate=true to overwrite."
+        exit 1
+
+    - name: Validate session directory exists
+      shell: bash
+      run: |
+        if [ ! -d "sessions/session${{ inputs.session_number }}" ]; then
+          echo "::error::Session directory sessions/session${{ inputs.session_number }} not found"
+          exit 1
+        fi
+        echo "✅ Session ${{ inputs.session_number }} directory found"
+
+    - name: Create session branch and copy files
+      shell: bash
+      run: |
+        SESSION_NUM=${{ inputs.session_number }}
+        # Create and switch to new session branch
+        git checkout -b session$SESSION_NUM
+
+        # Copy session-specific content to root
+        cp -r sessions/session$SESSION_NUM/* .
+
+        # Remove the sessions directory from the branch
+        rm -rf sessions/
+
+        # Stage all changes
+        git add .
+
+        # Remove any files that shouldn't be in the session branch
+        git reset HEAD sessions/ 2>/dev/null || true
+
+    - name: Setup branch-specific documentation
+      shell: bash
+      run: |
+        SESSION_NUM=${{ inputs.session_number }}
+        # Update README if it exists and has template variables
+        if [ -f README.md ]; then
+          sed -i 's/{{session-number}}/${{ inputs.session_number }}/g' README.md
+        fi
+
+    - name: Update package.json files with session info
+      shell: bash
+      run: |
+        SESSION_NUM=${{ inputs.session_number }}
+        # Find and update package.json files
+        find . -name "package.json" -type f -exec sed -i \
+          -e "s/{{session-number}}/${{ inputs.session_number }}/g" \
+          {} \;
+
+    - name: Create issue template
+      shell: bash
+      run: |
+        SESSION_NUMBER=${{ inputs.session_number }}
+        SESSION_BRANCH=session${{ inputs.session_number }}
+        SESSION_TOPIC="${{ inputs.session_topic }}"
+
+        mkdir -p .github/ISSUE_TEMPLATE
+
+        cat > .github/ISSUE_TEMPLATE/session-welcome.md << EOF
+        ---
+        name: 🚀 Session $SESSION_NUMBER Welcome
+        about: Welcome to Session $SESSION_NUMBER - this issue was automatically created
+        title: "Welcome to Session $SESSION_NUMBER! 🎉"
+        labels: ["session", "welcome", "session-$SESSION_NUMBER"]
+        ---
+
+        # Session $SESSION_NUMBER Information
+
+        - **Session Number**: $SESSION_NUMBER
+        - **Topic**: $SESSION_TOPIC
+        - **Status**: ✅ Ready to start!
+        - **Branch**: $SESSION_BRANCH
+
+        ## 🚀 You're all set!
+
+        Your session environment has been created successfully. Here's what happened:
+
+        - ✅ Created a new branch \`$SESSION_BRANCH\` with all the session materials
+        - ✅ Copied session-specific files and configurations
+        - ✅ Set up the development environment
+
+        This session branch contains all the files and workflows needed for Session $SESSION_NUMBER.
+
+        ## 🎯 Next Steps
+
+        1. Switch to the \`$SESSION_BRANCH\` branch in your repository
+        2. Follow the instructions in the README.md file
+        3. Complete the exercises at your own pace
+        4. Have fun learning! 🎉
+        EOF
+
+    - name: Commit and push session branch
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git commit -m "Initialize Session ${{ inputs.session_number }} - Clean starting state
+
+        - Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
+        - All session files and configurations ready
+        - Development environment set up
+        - Ready for learning! 🚀"
+
+        git push origin session${{ inputs.session_number }}

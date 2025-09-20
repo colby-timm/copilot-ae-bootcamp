@@ -12,8 +12,8 @@ Mona here. I've prepared an exciting AI coding journey for you! Each session pro
 
 | Session | Topic | Start Here |
 |---------|--------|------------|
-| **1** | Accelerated Engineering Core and Environment | [![Start Session 1](https://img.shields.io/badge/Start%20Session%201-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](../../actions/workflows/create-session.yml) |
-| **2** | Context Architecture and Management | [![Start Session 2](https://img.shields.io/badge/Start%20Session%202-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](../../actions/workflows/create-session.yml) |
+| **1** | Accelerated Engineering Core and Environment | [![Start Session 1](https://img.shields.io/badge/Start%20Session%201-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](../../actions/workflows/create-session-1.yml) |
+| **2** | Context Architecture and Management | [![Start Session 2](https://img.shields.io/badge/Start%20Session%202-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](../../actions/workflows/create-session-2.yml) |
 | **3** | Discovery and Design | [![Coming Soon](https://img.shields.io/badge/Coming%20Soon-⏳-gray?style=for-the-badge&logo=github&labelColor=6f42c1)]() |
 | **4** | IDE Development | [![Coming Soon](https://img.shields.io/badge/Coming%20Soon-⏳-gray?style=for-the-badge&logo=github&labelColor=6f42c1)]() |
 | **5** | Agentic Development | [![Coming Soon](https://img.shields.io/badge/Coming%20Soon-⏳-gray?style=for-the-badge&logo=github&labelColor=6f42c1)]() |

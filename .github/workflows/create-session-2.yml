@@ -1,0 +1,24 @@
+name: Create Session 2 Branch
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create_session:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Create Session 2
+        uses: ./.github/actions/create-session
+        with:
+          session_number: '2'
+          session_topic: 'Context Architecture and Management'
