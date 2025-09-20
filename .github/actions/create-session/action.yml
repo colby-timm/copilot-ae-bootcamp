@@ -90,75 +90,12 @@ runs:
         # Commit everything at once
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git commit -m "Initialize Session ${{ inputs.session_number }} - Clean starting state
+        git commit -m "Initialize Session ${{ inputs.session_number }}
 
-        - Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
-        - All session files and configurations ready
-        - Development environment set up
-        - Session workflows automatically active
-        - Ready for learning! 🚀"
+        Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
+        All session files copied to branch root"
 
-        echo "✅ Session files copied to branch root (session workflows active)"
-
-    - name: Setup branch-specific documentation
-      shell: bash
-      run: |
-        SESSION_NUM=${{ inputs.session_number }}
-        # Update README if it exists and has template variables
-        if [ -f README.md ]; then
-          sed -i 's/{{session-number}}/${{ inputs.session_number }}/g' README.md
-        fi
-
-    - name: Update package.json files with session info
-      shell: bash
-      run: |
-        SESSION_NUM=${{ inputs.session_number }}
-        # Find and update package.json files
-        find . -name "package.json" -type f -exec sed -i \
-          -e "s/{{session-number}}/${{ inputs.session_number }}/g" \
-          {} \;
-
-    - name: Create issue template
-      shell: bash
-      run: |
-        SESSION_NUMBER=${{ inputs.session_number }}
-        SESSION_BRANCH=session${{ inputs.session_number }}
-        SESSION_TOPIC="${{ inputs.session_topic }}"
-
-        mkdir -p .github/ISSUE_TEMPLATE
-
-        cat > .github/ISSUE_TEMPLATE/session-welcome.md << EOF
-        ---
-        name: 🚀 Session $SESSION_NUMBER Welcome
-        about: Welcome to Session $SESSION_NUMBER - this issue was automatically created
-        title: "Welcome to Session $SESSION_NUMBER! 🎉"
-        labels: ["session", "welcome", "session-$SESSION_NUMBER"]
-        ---
-
-        # Session $SESSION_NUMBER Information
-
-        - **Session Number**: $SESSION_NUMBER
-        - **Topic**: $SESSION_TOPIC
-        - **Status**: ✅ Ready to start!
-        - **Branch**: $SESSION_BRANCH
-
-        ## 🚀 You're all set!
-
-        Your session environment has been created successfully. Here's what happened:
-
-        - ✅ Created a new branch \`$SESSION_BRANCH\` with all the session materials
-        - ✅ Copied session-specific files and configurations
-        - ✅ Set up the development environment
-
-        This session branch contains all the files and workflows needed for Session $SESSION_NUMBER.
-
-        ## 🎯 Next Steps
-
-        1. Switch to the \`$SESSION_BRANCH\` branch in your repository
-        2. Follow the instructions in the README.md file
-        3. Complete the exercises at your own pace
-        4. Have fun learning! 🎉
-        EOF
+        echo "✅ Session files copied to branch root"
 
     - name: Push session branch
       shell: bash
