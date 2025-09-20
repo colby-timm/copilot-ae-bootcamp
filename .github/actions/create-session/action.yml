@@ -77,10 +77,14 @@ runs:
         # Copy session-specific content from temp to root
         cp -r /tmp/session-content/* .
 
-        # Handle workflow permissions by temporarily moving workflows
+        # Handle workflow files by moving them to a different location
+        # to avoid GitHub's workflow creation restrictions
         if [ -d ".github/workflows" ]; then
-          mv .github/workflows .github/workflows-temp
-          echo "📁 Temporarily moved workflows to avoid permission issues"
+          mkdir -p .session-workflows
+          mv .github/workflows/* .session-workflows/
+          rmdir .github/workflows 2>/dev/null || true
+          echo "📁 Moved workflows to .session-workflows/ to avoid permission issues"
+          echo "ℹ️  Users can manually move these to .github/workflows/ after cloning"
         fi
 
         # Debug: Show what's now in the root
@@ -90,10 +94,10 @@ runs:
         # Clean up temp directory
         rm -rf /tmp/session-content
 
-        # Stage all changes (except workflows)
+        # Stage all changes
         git add -A
 
-        # Commit without workflows first
+        # Commit everything at once
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git commit -m "Initialize Session ${{ inputs.session_number }} - Clean starting state
@@ -101,20 +105,10 @@ runs:
         - Session ${{ inputs.session_number }}: ${{ inputs.session_topic }}
         - All session files and configurations ready
         - Development environment set up
+        - Workflows available in .session-workflows/ directory
         - Ready for learning! 🚀"
 
-        # Now move workflows back and commit them separately
-        if [ -d ".github/workflows-temp" ]; then
-          mv .github/workflows-temp .github/workflows
-          git add .github/workflows
-          git commit -m "Add session workflows
-
-          - Session-specific GitHub Actions workflows
-          - GitHub Skills integration workflows"
-          echo "📁 Restored workflows directory"
-        fi
-
-        echo "✅ Session files copied to branch root (main content cleared)"
+        echo "✅ Session files copied to branch root (workflows moved to .session-workflows/)"
 
     - name: Setup branch-specific documentation
       shell: bash
