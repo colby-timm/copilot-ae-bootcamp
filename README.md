@@ -8,7 +8,16 @@ Mona here. I'm done preparing your exercise. Hope you enjoy! 💚
 
 Remember, it's self-paced so feel free to take a break! ☕️
 
-[![](https://img.shields.io/badge/Go%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/colby-timm/copilot-ae-bootcamp/issues/1)
+[![](https://img.shields.io/badge/Start%20Session%201-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/colby-timm/copilot-ae-bootcamp/issues/1)
+
+|Session|Progress|
+|-|-|
+|Session 1|⏳ Incomplete|
+|Session 2|⏳ Incomplete|
+|Session 3|⏳ Incomplete|
+|Session 4|⏳ Incomplete|
+|Session 5|⏳ Incomplete|
+|Session 6|⏳ Incomplete|
 
 ---
 
