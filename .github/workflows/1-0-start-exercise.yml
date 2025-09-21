@@ -3,7 +3,8 @@ name: Step 1-0 # Start Session
 on:
   push:
     branches:
-      - session1
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,25 +15,10 @@ env:
   STEP_1_FILE: ".github/steps/1-1-preparing.md"
 
 jobs:
-  setup_session_environment:
-    name: Setup Session Environment
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout session branch
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Setup Session 1
-        uses: ./.github/actions/setup-session
-        with:
-          session_number: '1'
-
   start_session:
     if: |
       !github.event.repository.is_template
     name: Start Session
-    needs: [setup_session_environment]
     uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.4.0
     with:
       exercise-title: "AI Coding Assistant Enablement Bootcamp Session 1"

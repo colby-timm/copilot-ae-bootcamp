@@ -156,3 +156,11 @@ jobs:
               }
             }'
           echo "Progress update triggered for Session 1 completion"
+
+      - name: Label issue as session complete
+        run: |
+          # Add a completion label to the exercise issue
+          gh issue edit "$ISSUE_URL" --add-label "session1-complete"
+          echo "Labeled issue with session1-complete"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -40,6 +40,21 @@ Mona here. I've prepared an exciting AI coding journey for you! Each session pro
 - **Want to restart?** Delete the session branch and create it again for a fresh environment
 - **Questions?** Open an issue and we'll help you out!
 
+## 🔄 Automatic Progression
+
+When you finish the last step of a session, the final workflow will label the exercise issue with `sessionX-complete` (for example `session1-complete`). That label automatically triggers the next session's starter workflow. Just:
+
+1. Complete all steps in the session issues
+2. Let the final validation run
+3. Watch the issue get the completion label
+4. Session 2 setup workflow begins (branch `session2` is prepared if it exists or when you create/push it)
+
+If the next session doesn't appear:
+
+- Make sure the label (e.g. `session1-complete`) was added
+- Manually create and push the next session branch (`git checkout -b session2 && git push origin session2`)
+- Re-run the last workflow if needed
+
 Remember, this is self-paced learning - take breaks and enjoy the journey! ☕️
 
 ---

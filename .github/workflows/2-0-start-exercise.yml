@@ -1,9 +1,8 @@
 name: Step 2-0 # Start Exercise
 
 on:
-  push:
-    branches:
-      - session2
+  issues:
+    types: [labeled]
   workflow_dispatch:
 
 permissions:
@@ -18,13 +17,28 @@ jobs:
   setup_session_environment:
     name: Setup Session Environment
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'session1-complete') ||
+      github.event_name == 'workflow_dispatch'
     steps:
-      - name: Checkout session branch
+      - name: Checkout session branch (create if needed)
         uses: actions/checkout@v5
         with:
+          ref: session2
           fetch-depth: 0
 
-      - name: Setup Session 2
+      - name: Ensure on session2 branch
+        shell: bash
+        run: |
+          current_branch=$(git rev-parse --abbrev-ref HEAD)
+          if [ "$current_branch" != "session2" ]; then
+            echo "Switching to session2 branch"
+            git fetch origin session2 || true
+            git checkout -B session2
+          fi
+
+      - name: Setup Session 2 (idempotent)
         uses: ./.github/actions/setup-session
         with:
           session_number: '2'
