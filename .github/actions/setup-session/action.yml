@@ -1,0 +1,69 @@
+name: 'Setup Session Environment'
+description: 'Sets up a session branch by copying session files to root and cleaning up directories'
+inputs:
+  session_number:
+    description: 'Session number (1-8)'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate session directory exists
+      shell: bash
+      run: |
+        if [ ! -d "sessions/session${{ inputs.session_number }}" ]; then
+          echo "::error::Session directory sessions/session${{ inputs.session_number }} not found"
+          exit 1
+        fi
+        echo "✅ Session ${{ inputs.session_number }} directory found"
+
+    - name: Copy session files to root
+      shell: bash
+      run: |
+        SESSION_NUM=${{ inputs.session_number }}
+
+        echo "📁 Contents of sessions/session$SESSION_NUM before copy:"
+        ls -la sessions/session$SESSION_NUM/
+
+        # Copy session content to root (including hidden files)
+        shopt -s dotglob
+        cp -r sessions/session$SESSION_NUM/* .
+
+        echo "✅ Session files copied to root"
+
+    - name: Clean up directories
+      shell: bash
+      run: |
+        # Remove the sessions folder
+        rm -rf sessions/
+        echo "🗑️ Removed sessions/ directory"
+
+        # Remove the docs folder if it exists
+        if [ -d "docs/" ]; then
+          rm -rf docs/
+          echo "🗑️ Removed docs/ directory"
+        fi
+
+    - name: Commit session setup
+      shell: bash
+      run: |
+        # Configure git
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        # Stage all changes
+        git add -A
+
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Setup Session ${{ inputs.session_number }} Environment
+
+          - Copied session files to root
+          - Removed sessions/ and docs/ directories
+          - Ready for learning!"
+
+          git push origin HEAD
+          echo "✅ Session environment committed and pushed"
+        fi

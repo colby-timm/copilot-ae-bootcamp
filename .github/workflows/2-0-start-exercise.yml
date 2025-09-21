@@ -15,10 +15,25 @@ env:
   STEP_2_FILE: ".github/steps/2-1-add-requirements-context.md"
 
 jobs:
+  setup_session_environment:
+    name: Setup Session Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout session branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Session 2
+        uses: ./.github/actions/setup-session
+        with:
+          session_number: '2'
+
   start_exercise:
     if: |
       !github.event.repository.is_template
     name: Start Exercise
+    needs: [setup_session_environment]
     uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.4.0
     with:
       exercise-title: "AI Coding Assistant Enablement Bootcamp Session 2"
